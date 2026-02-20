@@ -23,7 +23,14 @@ vars: {
   }
 }
 
-**.style.font-size: 35
+# **.style.font-size: 35
+# This is a workaround due to a bug with globs: https://github.com/terrastruct/d2/issues/2709
+*.style.font-size: 35
+*.*.style.font-size: 35
+*.*.*.style.font-size: 35
+*.*.*.*.style.font-size: 35
+*.*.*.*.*.style.font-size: 35
+
 (** -> **)[*].style.font-size: 30
 
 Secureblue Build: {
