@@ -1,4 +1,27 @@
 direction: right
+classes: {
+  https: {
+    style: {
+      font-color: black
+      stroke-width: 3
+      stroke: black
+    }
+  }
+  https+signature: {
+    style: {
+      font-color: green
+      stroke-width: 3
+      stroke: green
+    }
+  }
+  https+signature+provenance: {
+    style: {
+      font-color: blue
+      stroke-width: 3
+      stroke: blue
+    }
+  }
+}
 vars: {
   d2-config: {
     layout-engine: elk
@@ -8,15 +31,13 @@ vars: {
   }
   d2-legend: {
     a -> b: HTTPS + Signature Verification + Provenance Verification {
-      style.stroke: blue
-      style.font-color: blue
+      class: https+signature+provenance
     }
     a -> b: HTTPS + Signature Verification {
-      style.stroke: green
-      style.font-color: green
+      class: https+signature
     }
     a -> b: HTTPS {
-      style.stroke: black
+      class: https
     }
     a.style.opacity: 0
     b.style.opacity: 0
@@ -35,7 +56,7 @@ vars: {
 
 Secureblue Build: {
   Secureblue GitHub-Hosted Runner: {
-    icon: https://icons.terrastruct.com/dev%2Fgithub.svg
+    icon: ./assets/github.svg
     StepSecurity Harden-Runner (Egress Auditor): {
       icon: ./assets/stepsecurity.jpeg
       Build Job: {
@@ -52,14 +73,14 @@ Secureblue Build: {
     }
 
     StepSecurity Harden-Runner (Egress Auditor).Provenance Job.SLSA Generator -> StepSecurity Harden-Runner (Egress Auditor).Build Job: attestation generation {
-      style.stroke: black
+      class: https
     }
   }
 }
 
 Trivalent Build: {
   Secureblue GitHub-Hosted Runner: {
-    icon: https://icons.terrastruct.com/dev%2Fgithub.svg
+    icon: ./assets/github.svg
     StepSecurity Harden-Runner (Egress Auditor): {
       icon: ./assets/stepsecurity.jpeg
 
@@ -75,10 +96,10 @@ Trivalent Build: {
     }
 
     StepSecurity Harden-Runner (Egress Auditor).Provenance Job.SLSA generator -> StepSecurity Harden-Runner (Egress Auditor).Signing Job: attestation generation {
-      style.stroke: black
+      class: https
     }
     StepSecurity Harden-Runner (Egress Auditor).Provenance Job.SLSA generator -> StepSecurity Harden-Runner (Egress Auditor).SRPM Build Job: attestation generation {
-      style.stroke: black
+      class: https
     }
   }
 
@@ -109,11 +130,11 @@ Secureblue Copr Runners: {
 }
 
 Secureblue Copr Runners -> Fedora Copr: push build {
-  style.stroke: black
+  class: https
 }
 
 Secureblue Copr Runners -> Secureblue Github Repos: pull source {
-  style.stroke: black
+  class: https
 }
 
 GitHub Container Registry: {
@@ -149,63 +170,55 @@ Fedora Quay Registry: {
 
 Secureblue GitHub Repos: {
   shape: image
-  icon: https://icons.terrastruct.com/dev%2Fgithub.svg
+  icon: ./assets/github.svg
 }
 
 User Machine -> Github Container Registry: update pull {
-  style.stroke: blue
-  style.font-color: blue
+  class: https+signature+provenance
 }
 
 Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Provenance Job.SLSA Generator -> GitHub Container Registry: attestation push {
-  style.stroke: black
+  class: https
 }
 Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> GitHub Container Registry: image and signature push {
-  style.stroke: black
+  class: https
 }
 Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> Fedora Repos: install packages {
-  style.stroke: green
-  style.font-color: green
+  class: https+signature
 }
 Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> Negativo17: install packages {
-  style.stroke: green
-  style.font-color: green
+  class: https+signature
 }
 Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> Fedora Copr: install packages {
-  style.stroke: green
-  style.font-color: green
+  class: https+signature
 }
 Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> Fedora Quay Registry: pull base image {
-  style.stroke: green
-  style.font-color: green
+  class: https+signature
 }
 Trivalent Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Provenance Job.SLSA Generator -> Trivalent Build.Secureblue AWS-Hosted Runner via Runs-On.StepSecurity Harden-Runner (Egress Auditor).RPM Build Job: attestation generation {
-  style.stroke: black
+  class: https
 }
 Trivalent Build.Secureblue AWS-Hosted Runner via Runs-On.StepSecurity Harden-Runner (Egress Auditor).RPM Build Job -> Trivalent Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).SRPM Build Job: pull srpm {
-  style.stroke: black
+  class: https
 }
 Trivalent Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Signing Job -> Trivalent Build.Secureblue AWS-Hosted Runner via Runs-On.StepSecurity Harden-Runner (Egress Auditor).RPM Build Job: pull rpm {
-  style.stroke: black
+  class: https
 }
 Trivalent Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Signing Job -> Secureblue RPM Repo: push signed rpm {
-  style.stroke: black
+  class: https
 }
 Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> Secureblue RPM Repo: install trivalent rpm {
-  style.stroke: blue
-  style.font-color: blue
+  class: https+signature+provenance
 }
 Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> Secureblue Github Repos: pull trivalent attestation {
-  style.stroke: black
+  class: https
 }
 Trivalent Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).SRPM Build Job -> Fedora Copr: pull source cache {
-  style.stroke: green
-  style.font-color: green
+  class: https+signature
 }
 Trivalent Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Provenance Job.SLSA Generator -> Secureblue GitHub Repos: push attestation {
-  style.stroke: black
+  class: https
 }
 Secureblue Build.Secureblue GitHub-Hosted Runner -> GitHub Container Registry: install blue-build cli {
-  style.stroke: blue
-  style.font-color: blue
+  class: https+signature+provenance
 }
