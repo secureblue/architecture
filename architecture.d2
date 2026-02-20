@@ -54,10 +54,10 @@ vars: {
 
 (** -> **)[*].style.font-size: 30
 
-Secureblue Build: {
-  Secureblue GitHub-Hosted Runner: {
+secureblue-build: Secureblue Build {
+  secureblue-github-runner: Secureblue GitHub-Hosted Runner {
     icon: ./assets/github.svg
-    StepSecurity Harden-Runner (Egress Auditor): {
+    stepsecurity-runner: StepSecurity Harden-Runner {
       icon: ./assets/stepsecurity.jpeg
       Build Job: {
         Blue-Build CLI: {
@@ -72,16 +72,16 @@ Secureblue Build: {
       }
     }
 
-    StepSecurity Harden-Runner (Egress Auditor).Provenance Job.SLSA Generator -> StepSecurity Harden-Runner (Egress Auditor).Build Job: attestation generation {
+    stepsecurity-runner.Provenance Job.SLSA Generator -> stepsecurity-runner.Build Job: "generate\nattestation" {
       class: https
     }
   }
 }
 
 Trivalent Build: {
-  Secureblue GitHub-Hosted Runner: {
+  secureblue-github-runner: Secureblue GitHub-Hosted Runner {
     icon: ./assets/github.svg
-    StepSecurity Harden-Runner (Egress Auditor): {
+    stepsecurity-runner: StepSecurity Harden-Runner {
       icon: ./assets/stepsecurity.jpeg
 
       SRPM Build Job
@@ -95,17 +95,17 @@ Trivalent Build: {
       }
     }
 
-    StepSecurity Harden-Runner (Egress Auditor).Provenance Job.SLSA generator -> StepSecurity Harden-Runner (Egress Auditor).Signing Job: attestation generation {
+    stepsecurity-runner.Provenance Job.SLSA generator -> stepsecurity-runner.Signing Job: "generate\nattestation" {
       class: https
     }
-    StepSecurity Harden-Runner (Egress Auditor).Provenance Job.SLSA generator -> StepSecurity Harden-Runner (Egress Auditor).SRPM Build Job: attestation generation {
+    stepsecurity-runner.Provenance Job.SLSA generator -> stepsecurity-runner.SRPM Build Job: "generate\nattestation" {
       class: https
     }
   }
 
-  Secureblue AWS-Hosted Runner via Runs-On: {
+  aws-runner: "Secureblue AWS-Hosted Runner" {
     icon: ./assets/runson.png
-    StepSecurity Harden-Runner (Egress Auditor): {
+    stepsecurity-runner: "StepSecurity Harden-Runner" {
       icon: ./assets/stepsecurity.jpeg
 
       RPM Build Job
@@ -129,16 +129,18 @@ Secureblue Copr Runners: {
   Build for Trivalent subresource filter
 }
 
-Secureblue Copr Runners -> Fedora Copr: push build {
+Secureblue Copr Runners -> Fedora Copr: "push build" {
   class: https
 }
 
-Secureblue Copr Runners -> Secureblue Github Repos: pull source {
+Secureblue Copr Runners -> Secureblue Github Repos: "pull source" {
   class: https
 }
 
-GitHub Container Registry: {
+ghcr: "GitHub\nContainer\nRegistry" {
   icon: ./assets/githubcontainerregistry.png
+  width: 200
+  height: 200
 }
 
 User Machine: {
@@ -173,52 +175,52 @@ Secureblue GitHub Repos: {
   icon: ./assets/github.svg
 }
 
-User Machine -> Github Container Registry: update pull {
+User Machine -> ghcr: "pull update" {
   class: https+signature+provenance
 }
 
-Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Provenance Job.SLSA Generator -> GitHub Container Registry: attestation push {
+secureblue-build.secureblue-github-runner.stepsecurity-runner.Provenance Job.SLSA Generator -> ghcr: "push\nattestation" {
   class: https
 }
-Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> GitHub Container Registry: image and signature push {
+secureblue-build.secureblue-github-runner.stepsecurity-runner.Build Job.Blue-Build CLI -> ghcr: "push image\n& signature" {
   class: https
 }
-Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> Fedora Repos: install packages {
+secureblue-build.secureblue-github-runner.stepsecurity-runner.Build Job.Blue-Build CLI -> Fedora Repos: "install packages" {
   class: https+signature
 }
-Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> Negativo17: install packages {
+secureblue-build.secureblue-github-runner.stepsecurity-runner.Build Job.Blue-Build CLI -> Negativo17: "install packages" {
   class: https+signature
 }
-Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> Fedora Copr: install packages {
+secureblue-build.secureblue-github-runner.stepsecurity-runner.Build Job.Blue-Build CLI -> Fedora Copr: "install packages" {
   class: https+signature
 }
-Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> Fedora Quay Registry: pull base image {
+secureblue-build.secureblue-github-runner.stepsecurity-runner.Build Job.Blue-Build CLI -> Fedora Quay Registry: "pull base image" {
   class: https+signature
 }
-Trivalent Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Provenance Job.SLSA Generator -> Trivalent Build.Secureblue AWS-Hosted Runner via Runs-On.StepSecurity Harden-Runner (Egress Auditor).RPM Build Job: attestation generation {
+Trivalent Build.secureblue-github-runner.stepsecurity-runner.Provenance Job.SLSA Generator -> Trivalent Build.aws-runner.stepsecurity-runner.RPM Build Job: "generate\nattestation" {
   class: https
 }
-Trivalent Build.Secureblue AWS-Hosted Runner via Runs-On.StepSecurity Harden-Runner (Egress Auditor).RPM Build Job -> Trivalent Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).SRPM Build Job: pull srpm {
+Trivalent Build.aws-runner.stepsecurity-runner.RPM Build Job -> Trivalent Build.secureblue-github-runner.stepsecurity-runner.SRPM Build Job: "pull srpm" {
   class: https
 }
-Trivalent Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Signing Job -> Trivalent Build.Secureblue AWS-Hosted Runner via Runs-On.StepSecurity Harden-Runner (Egress Auditor).RPM Build Job: pull rpm {
+Trivalent Build.secureblue-github-runner.stepsecurity-runner.Signing Job -> Trivalent Build.aws-runner.stepsecurity-runner.RPM Build Job: "pull rpm" {
   class: https
 }
-Trivalent Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Signing Job -> Secureblue RPM Repo: push signed rpm {
+Trivalent Build.secureblue-github-runner.stepsecurity-runner.Signing Job -> Secureblue RPM Repo: "push signed rpm" {
   class: https
 }
-Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> Secureblue RPM Repo: install trivalent rpm {
+secureblue-build.secureblue-github-runner.stepsecurity-runner.Build Job.Blue-Build CLI -> Secureblue RPM Repo: "install\ntrivalent rpm" {
   class: https+signature+provenance
 }
-Secureblue Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Build Job.Blue-Build CLI -> Secureblue Github Repos: pull trivalent attestation {
+secureblue-build.secureblue-github-runner.stepsecurity-runner.Build Job.Blue-Build CLI -> Secureblue Github Repos: "pull trivalent\nattestation" {
   class: https
 }
-Trivalent Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).SRPM Build Job -> Fedora Copr: pull source cache {
+Trivalent Build.secureblue-github-runner.stepsecurity-runner.SRPM Build Job -> Fedora Copr: "pull source cache" {
   class: https+signature
 }
-Trivalent Build.Secureblue GitHub-Hosted Runner.StepSecurity Harden-Runner (Egress Auditor).Provenance Job.SLSA Generator -> Secureblue GitHub Repos: push attestation {
+Trivalent Build.secureblue-github-runner.stepsecurity-runner.Provenance Job.SLSA Generator -> Secureblue GitHub Repos: "push attestation" {
   class: https
 }
-Secureblue Build.Secureblue GitHub-Hosted Runner -> GitHub Container Registry: install blue-build cli {
+secureblue-build.secureblue-github-runner -> ghcr: "install\nBlueBuild CLI" {
   class: https+signature+provenance
 }
